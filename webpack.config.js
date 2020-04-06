@@ -1,5 +1,6 @@
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 // const autoprefixer = requre('autoprefixer');
@@ -19,16 +20,11 @@ const config = {
         rules: [
         {
             test: /\.scss$/,
-            use: ExtractTextPlugin.extract({
-                use: [{
-                    loader: 'css-loader',
-                    options: {
-                        minimize: true || {/* CSSNano Options */}
-                    } 
-                }, {
-                    loader: 'sass-loader',
-                }]
-            }),
+            use: [
+                { loader: MiniCssExtractPlugin.loader },
+                { loader: 'css-loader' },
+                { loader: 'sass-loader' },
+            ]
         },
         {
             test: /\.js$/,
@@ -45,8 +41,11 @@ const config = {
         },
         ]
     },
+    optimization: {
+        minimizer: [ new OptimizeCSSAssetsPlugin({}) ],
+    },
     plugins: [
-        new ExtractTextPlugin('quill-tweet.css'),
+        new MiniCssExtractPlugin('quill-tweet.css'),
         new UglifyJSPlugin({
             compress: {
                 warnings: false,
